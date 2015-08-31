@@ -61,6 +61,10 @@ auth.settings.retrieve_password_captcha = None
 
 auth.settings.expiration = 3600  # seconds
 
+custom_auth_table = db[auth.settings.table_user_name] # get the custom_auth_table
+custom_auth_table.email.requires = [
+#    IS_EMAIL(error_message=auth.messages.invalid_email),
+    IS_NOT_IN_DB(db, custom_auth_table.email)]
 
 #########################################################################
 ## If you need to use OpenID, Facebook, MySpace, Twitter, Linkedin, etc.
