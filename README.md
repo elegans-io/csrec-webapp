@@ -12,3 +12,19 @@ Dependencies
 
 The application depende on [web2py](http://www.web2py.com) and [cold-start-recommender](https://github.com/elegans-io/cold-start-recommender)
 
+
+Installation
+============
+
+wget http://www.web2py.com/examples/static/web2py_src.zip
+
+unzip web2py.zip
+
+wget https://github.com/elegans-io/csrec-webapp/archive/master.zip
+
+unzip master.zip
+
+(entering virtualenv)
+install csrec
+
+./web2py.py --password=rinoceronte -D 0 --verbose --ip=0.0.0.0

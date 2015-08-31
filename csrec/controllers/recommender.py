@@ -3,7 +3,7 @@ __author__ = 'angleto'
 """
 Update (or insert) item. The unique_id must be given as param
 e.g.:
-curl -X POST -H "Content-Type: application/json" -d '[{ "_id" : "123", "type": "lady", "category" : "romance"}, { "_id" : "Book1", "type": "male", "category" : "hardcore"}]' 'http://localhost:8000/csrec/appadmin/insertitems?unique_id=_id'
+curl -X POST -H "Content-Type: application/json" -d '[{ "_id" : "123", "type": "lady", "category" : "romance"}, { "_id" : "Book1", "type": "male", "category" : "hardcore"}]' 'http://localhost:8000/csrec/recommender/insertitems?unique_id=_id'
 """
 @auth.requires_login()
 @request.restful()
@@ -19,10 +19,10 @@ def insertitems():
 
 """
 e.g.:
-curl -X POST  'http://localhost:8000/csrec/appadmin/itemaction?item=Book1&user=User1&code=1&item_info=my_category&only_info=false'
-curl -X POST  'http://localhost:8000/csrec/appadmin/itemaction?item=Book2&user=User1&code=2&item_info=my_category&only_info=false'
-curl -X POST  'http://localhost:8000/csrec/appadmin/itemaction?item=Book3&user=User2&code=3&item_info=my_category&only_info=false'
-curl -X POST  'http://localhost:8000/csrec/appadmin/itemaction?item=Book4&user=User2&code=4&item_info=my_category&only_info=false'
+curl -X POST  'http://localhost:8000/csrec/recommender/itemaction?item=Book1&user=User1&code=1&item_info=my_category&only_info=false'
+curl -X POST  'http://localhost:8000/csrec/recommender/itemaction?item=Book2&user=User1&code=2&item_info=my_category&only_info=false'
+curl -X POST  'http://localhost:8000/csrec/recommender/itemaction?item=Book3&user=User2&code=3&item_info=my_category&only_info=false'
+curl -X POST  'http://localhost:8000/csrec/recommender/itemaction?item=Book4&user=User2&code=4&item_info=my_category&only_info=false'
 """
 @auth.requires_login()
 @request.restful()
@@ -46,7 +46,7 @@ def itemaction():
 
 """
 e.g.:
-curl -X POST  'http://localhost:8000/csrec/appadmin/socialaction?user=User1&user_to=User2&code=4'
+curl -X POST  'http://localhost:8000/csrec/recommender/socialaction?user=User1&user_to=User2&code=4'
 """
 @auth.requires_login()
 @request.restful()
@@ -62,7 +62,7 @@ def socialaction():
     return locals()
 
 """
-curl -X GET  'http://localhost:8000/csrec/appadmin/item?id=Book1'
+curl -X GET  'http://localhost:8000/csrec/recommender/item?id=Book1'
 """
 @auth.requires_login()
 @request.restful()
@@ -76,7 +76,7 @@ def item():
     return locals()
 
 """
-curl -X GET  'http://localhost:8000/csrec/appadmin/recommend?user=User1&max_recs=10&fast=False'
+curl -X GET  'http://localhost:8000/csrec/recommender/recommend?user=User1&max_recs=10&fast=False'
 """
 @auth.requires_login()
 @request.restful()
@@ -91,7 +91,7 @@ def recommend():
         return recomms
 
 """
-curl -X POST 'http://localhost:8000/csrec/appadmin/reconcile?old=User1&new=User2'
+curl -X POST 'http://localhost:8000/csrec/recommender/reconcile?old=User1&new=User2'
 """
 @auth.requires_login()
 @request.restful()
@@ -108,7 +108,7 @@ def reconcile():
     return locals()
 
 """
-curl -X GET  'http://localhost:8000/csrec/appadmin/info/user?user=User1'
+curl -X GET  'http://localhost:8000/csrec/recommender/info/user?user=User1'
 """
 @auth.requires_login()
 @request.restful()
@@ -117,15 +117,15 @@ def info():
 
     def GET(*args, **kwargs):
         if args and args[0] == 'user':
-            if user[0] == 'user':
+            if args[0] == 'user':
                 user_id = kwargs['user']
                 recomms = csrec_db.get_user_item_actions(user_id=user_id)
                 return recomms
     return locals()
 
 
-#TODO: POST http://localhost:8000/csrec/appadmin/update/{uid}/profiling/{item_id}
-#TODO: GET http://localhost:8000/csrec/appadmin/ranking/users/{type}
-#TODO: GET http://localhost:8000/csrec/appadmin/ranking/items/{type}
-#TODO: GET http://localhost:8000/csrec/appadmin/info/item/{item_id}
-#TODO: GET http://localhost:8000/csrec/appadmin/query?item_id=X&category=Y
+#TODO: POST http://localhost:8000/csrec/recommender/update/{uid}/profiling/{item_id}
+#TODO: GET http://localhost:8000/csrec/recommender/ranking/users/{type}
+#TODO: GET http://localhost:8000/csrec/recommender/ranking/items/{type}
+#TODO: GET http://localhost:8000/csrec/recommender/info/item/{item_id}
+#TODO: GET http://localhost:8000/csrec/recommender/query?item_id=X&category=Y
