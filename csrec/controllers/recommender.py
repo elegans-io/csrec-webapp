@@ -118,9 +118,10 @@ def info():
     def GET(*args, **kwargs):
         if args and args[0] == 'user':
             if args[0] == 'user':
-                user_id = kwargs['user']
-                recomms = csrec_db.get_user_item_actions(user_id=user_id)
-                return recomms
+                if kwargs.get('user', ''):
+                    user_id = kwargs['user']
+                    recomms = csrec_db.get_user_item_actions(user_id=user_id)
+                    return recomms
     return locals()
 
 

@@ -25,6 +25,9 @@ wget https://github.com/elegans-io/csrec-webapp/archive/master.zip
 unzip master.zip
 
 (entering virtualenv)
+
 install csrec
 
-./web2py.py --password=rinoceronte -D 0 --verbose --ip=0.0.0.0
+copying application into web2py/applications
+
+./web2py.py --password=password -D 0 --verbose --ip=0.0.0.0
