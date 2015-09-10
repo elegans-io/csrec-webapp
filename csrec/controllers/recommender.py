@@ -8,11 +8,11 @@ curl -X POST -H "Content-Type: application/json" -d '[{ "_id" : "123", "type": "
 @auth.requires_login()
 @request.restful()
 def insertitems():
-    response.view = 'generic.json'
+    response.headers['Content-Type'] = 'application/json'
 
-    def POST(*args, **vars):
-        items = json.loads(self.request.body)
-        item_id = self.request.params['unique_id']
+    def POST(*args, **kwargs):
+        items = json.loads(request.body.read())
+        item_id = kwargs['unique_id']
         for i in items:
             csrec_db.insert_item(item_id=i[item_id], attributes=i)
     return locals()
@@ -27,36 +27,48 @@ curl -X POST  'http://localhost:8000/csrec/recommender/itemaction?item=Book4&use
 @auth.requires_login()
 @request.restful()
 def itemaction():
-    response.view = 'generic.json'
+    response.headers['Content-Type'] = 'application/json'
 
-    def POST(*args, **vars):
-        only_info = kwargs['only_info']
-        if only_info.lower() == 'true':
-            only_info = True
-        else:
-            only_info = False
+    def POST(*args, **kwargs):
+        only_info = False
+        if 'only_info' in kwargs:
+            only_info_param = kwargs['only_info']
+            if only_info_param.lower() == 'true':
+                only_info = True
+
+        try:
+            user_id = kwargs['user']
+            item_id = kwargs['item']
+            code = float(kwargs['code'])
+            if 'item_info' in kwargs:
+                item_meaningful_info = kwargs['item_info']
+            else:
+                item_meaningful_info = None
+        except KeyError:
+            raise HTTP(400, "invalid function call, check parameters")
+
         csrec_db.insert_item_action_recommender(
-            user_id=kwargs['user'],
-            item_id=kwargs['item'],
-            code=float(kwargs['code']),
-            item_meaningful_info=kwargs['item_info'],
+            user_id=user_id,
+            item_id=item_id,
+            code=code,
+            item_meaningful_info=item_meaningful_info,
             only_info=only_info
         )
     return locals()
 
 """
 e.g.:
-curl -X POST  'http://localhost:8000/csrec/recommender/socialaction?user=User1&user_to=User2&code=4'
+curl -X POST  'http://localhost:8000/csrec/recommender/socialaction?user_id=User1&user_id_to=User2&code=4'
 """
 @auth.requires_login()
 @request.restful()
 def socialaction():
-    response.view = 'generic.json'
+    response.headers['Content-Type'] = 'application/json'
 
-    def POST(*args,**kwargs):
+    def POST(*args, **kwargs):
         csrec_db.insert_social_action(
-            user_id=kwargs['user'],
-            user_id_to=kwargs['user_to'],
+            user_id=kwargs['user_id'],
+            user_id_to=kwargs['user_id_to'],
             code=float(kwargs['code'])
         )
     return locals()
@@ -67,12 +79,12 @@ curl -X GET  'http://localhost:8000/csrec/recommender/item?id=Book1'
 @auth.requires_login()
 @request.restful()
 def item():
-    response.view = 'generic.json'
+    response.headers['Content-Type'] = 'application/json'
 
     def GET(*args, **kwargs):
         item_id = kwargs.get('id')
         item_record = csrec_db.get_item(item_id=item_id)
-        return item_record
+        return json.dumps(item_record)
     return locals()
 
 """
@@ -81,14 +93,15 @@ curl -X GET  'http://localhost:8000/csrec/recommender/recommend?user=User1&max_r
 @auth.requires_login()
 @request.restful()
 def recommend():
-    response.view = 'generic.json'
+    response.headers['Content-Type'] = 'application/json'
 
     def GET(*args, **kwargs):
         user = kwargs['user']
         max_recs = int(kwargs.get('max_recs', 10))
         fast = kwargs.get('fast', False)
         recomms = engine.get_recommendations(user, max_recs=max_recs, fast=fast)
-        return recomms
+        return json.dumps(recomms)
+    return locals()
 
 """
 curl -X POST 'http://localhost:8000/csrec/recommender/reconcile?old=User1&new=User2'
@@ -96,7 +109,7 @@ curl -X POST 'http://localhost:8000/csrec/recommender/reconcile?old=User1&new=Us
 @auth.requires_login()
 @request.restful()
 def reconcile():
-    response.view = 'generic.json'
+    response.headers['Content-Type'] = 'application/json'
 
     def POST(*args, **kwargs):
         old_user_id = kwargs['old']
@@ -108,20 +121,19 @@ def reconcile():
     return locals()
 
 """
-curl -X GET  'http://localhost:8000/csrec/recommender/info/user?user=User1'
+curl -X GET 'http://localhost:8000/csrec/recommender/info/user?user=User1'
 """
 @auth.requires_login()
 @request.restful()
 def info():
-    response.view = 'generic.json'
+    response.headers['Content-Type'] = 'application/json'
 
     def GET(*args, **kwargs):
         if args and args[0] == 'user':
-            if args[0] == 'user':
-                if kwargs.get('user', ''):
-                    user_id = kwargs['user']
-                    recomms = csrec_db.get_user_item_actions(user_id=user_id)
-                    return recomms
+            user_id = kwargs.get('user', '')
+            if user_id:
+                actions = csrec_db.get_user_item_actions(user_id=user_id)
+                return json.dumps(actions)
     return locals()
 
 
