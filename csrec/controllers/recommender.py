@@ -74,7 +74,7 @@ def socialaction():
     return locals()
 
 """
-curl -X GET  'http://localhost:8000/csrec/recommender/item?id=Book1'
+curl -X GET  'http://localhost:8000/csrec/recommender/item?item=Book1'
 """
 @auth.requires_login()
 @request.restful()
@@ -82,7 +82,7 @@ def item():
     response.headers['Content-Type'] = 'application/json'
 
     def GET(*args, **kwargs):
-        item_id = kwargs.get('id')
+        item_id = kwargs.get('item')
         item_record = csrec_db.get_item(item_id=item_id)
         return json.dumps(item_record)
     return locals()
