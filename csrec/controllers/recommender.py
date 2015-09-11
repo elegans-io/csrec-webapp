@@ -122,6 +122,7 @@ def reconcile():
 
 """
 curl -X GET 'http://localhost:8000/csrec/recommender/info/user?user=User1'
+curl -X GET 'http://localhost:8000/csrec/recommender/info/item?item=item1'
 """
 @auth.requires_login()
 @request.restful()
@@ -129,19 +130,22 @@ def info():
     response.headers['Content-Type'] = 'application/json'
 
     def GET(*args, **kwargs):
-        actions = { 'social': [], 'item': []}
-        if args and args[0] == 'user':
-            user_id = kwargs.get('user', '')
-            if user_id:
-                item_actions = csrec_db.get_user_item_actions(user_id=user_id)
-                social_actions = csrec_db.get_user_social_actions(user_id=user_id)
-                actions = {'social': social_actions, 'item': item_actions}
-                return json.dumps(actions)
+        if args:
+            if args[0] == 'user':
+                user_id = kwargs.get('user', '')
+                if user_id:
+                    item_actions = csrec_db.get_user_item_actions(user_id=user_id)
+                    social_actions = csrec_db.get_user_social_actions(user_id=user_id)
+                    actions = {'social': social_actions, 'item': item_actions}
+                    return json.dumps(actions)
+            if args[0] == 'item':
+                    item_id = kwargs.get('item', '')
+                    actions_on_items = csrec_db.get_users_actions_on_item(item_id=item_id)
+                    return json.dumps(actions_on_items)
     return locals()
 
 
 #TODO: POST http://localhost:8000/csrec/recommender/update/{uid}/profiling/{item_id}
 #TODO: GET http://localhost:8000/csrec/recommender/ranking/users/{type}
 #TODO: GET http://localhost:8000/csrec/recommender/ranking/items/{type}
-#TODO: GET http://localhost:8000/csrec/recommender/info/item/{item_id}
 #TODO: GET http://localhost:8000/csrec/recommender/query?item_id=X&category=Y
