@@ -58,7 +58,7 @@ def itemaction():
 
 """
 e.g.:
-curl -X POST  'http://localhost:8000/csrec/recommender/socialaction?user_id=User1&user_id_to=User2&code=4'
+curl -X POST  'http://localhost:8000/csrec/recommender/socialaction?user=User1&user_to=User2&code=4'
 """
 @auth.requires_login()
 @request.restful()
@@ -67,8 +67,8 @@ def socialaction():
 
     def POST(*args, **kwargs):
         csrec_db.insert_social_action(
-            user_id=kwargs['user_id'],
-            user_id_to=kwargs['user_id_to'],
+            user_id=kwargs['user'],
+            user_id_to=kwargs['user_to'],
             code=float(kwargs['code'])
         )
     return locals()
@@ -88,7 +88,7 @@ def item():
     return locals()
 
 """
-curl -X GET  'http://localhost:8000/csrec/recommender/recommend?user=User1&max_recs=10&fast=False'
+curl -X GET  'http://localhost:8000/csrec/recommender/recommend?user=User1&limit=10&fast=false'
 """
 @auth.requires_login()
 @request.restful()
@@ -97,14 +97,14 @@ def recommend():
 
     def GET(*args, **kwargs):
         user = kwargs['user']
-        max_recs = int(kwargs.get('max_recs', 10))
+        max_recs = int(kwargs.get('limit', 10))
         fast = kwargs.get('fast', False)
         recomms = engine.get_recommendations(user, max_recs=max_recs, fast=fast)
         return json.dumps(recomms)
     return locals()
 
 """
-curl -X POST 'http://localhost:8000/csrec/recommender/reconcile?old=User1&new=User2'
+curl -X POST 'http://localhost:8000/csrec/recommender/reconcile?user_old=User1&user_new=User2'
 """
 @auth.requires_login()
 @request.restful()
@@ -112,8 +112,8 @@ def reconcile():
     response.headers['Content-Type'] = 'application/json'
 
     def POST(*args, **kwargs):
-        old_user_id = kwargs['old']
-        new_user_id = kwargs['new']
+        old_user_id = kwargs['user_old']
+        new_user_id = kwargs['user_new']
         csrec_db.reconcile_user(
             old_user_id=old_user_id,
             new_user_id=new_user_id
@@ -129,10 +129,13 @@ def info():
     response.headers['Content-Type'] = 'application/json'
 
     def GET(*args, **kwargs):
+        actions = { 'social': [], 'item': []}
         if args and args[0] == 'user':
             user_id = kwargs.get('user', '')
             if user_id:
-                actions = csrec_db.get_user_item_actions(user_id=user_id)
+                item_actions = csrec_db.get_user_item_actions(user_id=user_id)
+                social_actions = csrec_db.get_user_social_actions(user_id=user_id)
+                actions = {'social': social_actions, 'item': item_actions}
                 return json.dumps(actions)
     return locals()
 
