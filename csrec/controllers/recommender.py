@@ -47,7 +47,7 @@ def itemaction():
         except KeyError:
             raise HTTP(400, "invalid function call, check parameters")
 
-        csrec_db.insert_item_action_recommender(
+        csrec_db.insert_item_action(
             user_id=user_id,
             item_id=item_id,
             code=code,
@@ -83,7 +83,7 @@ def item():
 
     def GET(*args, **kwargs):
         item_id = kwargs.get('item')
-        item_record = csrec_db.get_item(item_id=item_id)
+        item_record = csrec_db.get_items(item_id=item_id)
         return json.dumps(item_record)
     return locals()
 
@@ -114,10 +114,13 @@ def reconcile():
     def POST(*args, **kwargs):
         old_user_id = kwargs['user_old']
         new_user_id = kwargs['user_new']
-        csrec_db.reconcile_user(
-            old_user_id=old_user_id,
-            new_user_id=new_user_id
-        )
+        try:
+            csrec_db.reconcile_user(
+                old_user_id=old_user_id,
+                new_user_id=new_user_id
+            )
+        except csrec_exc.MergeEntitiesException as e:
+            logger.warn("No reconciliation: %s" % e)
     return locals()
 
 """
@@ -134,13 +137,16 @@ def info():
             if args[0] == 'user':
                 user_id = kwargs.get('user', '')
                 if user_id:
-                    item_actions = csrec_db.get_user_item_actions(user_id=user_id)
-                    social_actions = csrec_db.get_user_social_actions(user_id=user_id)
-                    actions = {'social': social_actions, 'item': item_actions}
+                    item_actions = csrec_db.get_item_actions(user_id=user_id)
+                    if item_actions:
+                        social_actions = csrec_db.get_social_actions(user_id=user_id)
+                        actions = {'social': social_actions, 'item': item_actions}
+                    else:
+                        actions = {}
                     return json.dumps(actions)
             if args[0] == 'item':
                     item_id = kwargs.get('item', '')
-                    actions_on_items = csrec_db.get_users_actions_on_item(item_id=item_id)
+                    actions_on_items = csrec_db.get_item_ratings(item_id=item_id)
                     return json.dumps(actions_on_items)
     return locals()
 
