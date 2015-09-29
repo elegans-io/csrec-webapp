@@ -19,10 +19,8 @@ def insertitems():
 
 """
 e.g.:
-curl -X POST  'http://localhost:8000/csrec/recommender/itemaction?item=Book1&user=User1&code=1&item_info=my_category&only_info=false'
-curl -X POST  'http://localhost:8000/csrec/recommender/itemaction?item=Book2&user=User1&code=2&item_info=my_category&only_info=false'
-curl -X POST  'http://localhost:8000/csrec/recommender/itemaction?item=Book3&user=User2&code=3&item_info=my_category&only_info=false'
-curl -X POST  'http://localhost:8000/csrec/recommender/itemaction?item=Book4&user=User2&code=4&item_info=my_category&only_info=false'
+curl -X POST -H "Content-Type: application/json" -d '{ "item_info" : ["type", "category"]}' 'http://localhost:8000/csrec/recommender/itemaction?item=item1&user=User1&code=1&only_info=false'
+curl -X POST -H "Content-Type: application/json" -d '{ "item_info" : ["type", "category"]}' 'http://localhost:8000/csrec/recommender/itemaction?item=item2&user=User1&code=2&only_info=false'
 """
 @auth.requires_login()
 @request.restful()
