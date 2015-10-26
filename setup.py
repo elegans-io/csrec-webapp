@@ -15,16 +15,18 @@ setup(
     long_description="Web application which provide an API for the cold start recommender",
 
     # Application author details:
-    author="elegans.io",
+    author="elegans.io Ltd",
     author_email="info@elegans.io",
 
     # Choose your license
-    license='Private',
+    license='LICENSE.txt',
 
     # Include additional files into the package
     include_package_data=False,
 
     scripts=['csrec_webapp.py'],
+
+	url='https://github.com/elegans-io/csrec-webapp',
 
     # Dependent packages (distributions)
     install_requires=["cold-start-recommender>=0.5.0",
