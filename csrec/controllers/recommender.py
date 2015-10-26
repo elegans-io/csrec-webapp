@@ -15,6 +15,7 @@ def insertitems():
         item_id = kwargs['unique_id']
         for i in items:
             engine.db.insert_item(item_id=i[item_id], attributes=i)
+        return json.dumps({})
     return locals()
 
 """
@@ -52,6 +53,7 @@ def itemaction():
             item_meaningful_info=item_meaningful_info,
             only_info=only_info
         )
+        return json.dumps({})
     return locals()
 
 """
@@ -69,6 +71,7 @@ def socialaction():
             user_id_to=kwargs['user_to'],
             code=float(kwargs['code'])
         )
+        return json.dumps({})
     return locals()
 
 """
@@ -119,6 +122,7 @@ def reconcile():
             )
         except csrec_exc.MergeEntitiesException as e:
             logger.warn("No reconciliation: %s" % e)
+        return json.dumps({})
     return locals()
 
 """
