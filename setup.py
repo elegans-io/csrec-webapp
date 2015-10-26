@@ -27,6 +27,7 @@ setup(
     scripts=['csrec_webapp.py'],
 
     # Dependent packages (distributions)
-    install_requires=["cold-start-recommender>=0.4",
-                      "tornado>=4.2.1"]
+    install_requires=["cold-start-recommender>=0.5.0",
+                      "tornado>=4.2.1",
+                      "locustio>=0.7.3"]
 )
