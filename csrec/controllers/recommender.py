@@ -14,7 +14,7 @@ def insertitems():
         items = json.loads(request.body.read())
         item_id = kwargs['unique_id']
         for i in items:
-            csrec_db.insert_item(item_id=i[item_id], attributes=i)
+            engine.db.insert_item(item_id=i[item_id], attributes=i)
     return locals()
 
 """
@@ -45,7 +45,7 @@ def itemaction():
         except KeyError:
             raise HTTP(400, "invalid function call, check parameters")
 
-        csrec_db.insert_item_action(
+        engine.db.insert_item_action(
             user_id=user_id,
             item_id=item_id,
             code=code,
@@ -64,7 +64,7 @@ def socialaction():
     response.headers['Content-Type'] = 'application/json'
 
     def POST(*args, **kwargs):
-        csrec_db.insert_social_action(
+        engine.db.insert_social_action(
             user_id=kwargs['user'],
             user_id_to=kwargs['user_to'],
             code=float(kwargs['code'])
@@ -81,7 +81,7 @@ def item():
 
     def GET(*args, **kwargs):
         item_id = kwargs.get('item')
-        item_record = csrec_db.get_items(item_id=item_id)
+        item_record = engine.db.get_items(item_id=item_id)
         return json.dumps(item_record)
     return locals()
 
@@ -113,7 +113,7 @@ def reconcile():
         old_user_id = kwargs['user_old']
         new_user_id = kwargs['user_new']
         try:
-            csrec_db.reconcile_user(
+            engine.db.reconcile_user(
                 old_user_id=old_user_id,
                 new_user_id=new_user_id
             )
@@ -135,16 +135,16 @@ def info():
             if args[0] == 'user':
                 user_id = kwargs.get('user', '')
                 if user_id:
-                    item_actions = csrec_db.get_item_actions(user_id=user_id)
+                    item_actions = engine.db.get_item_actions(user_id=user_id)
                     if item_actions:
-                        social_actions = csrec_db.get_social_actions(user_id=user_id)
+                        social_actions = engine.db.get_social_actions(user_id=user_id)
                         actions = {'social': social_actions, 'item': item_actions}
                     else:
                         actions = {}
                     return json.dumps(actions)
             if args[0] == 'item':
                     item_id = kwargs.get('item', '')
-                    actions_on_items = csrec_db.get_item_ratings(item_id=item_id)
+                    actions_on_items = engine.db.get_item_ratings(item_id=item_id)
                     return json.dumps(actions_on_items)
     return locals()
 
