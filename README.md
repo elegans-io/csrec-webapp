@@ -10,7 +10,7 @@ The csrec application is a work in progress and works only with the branch bette
 Dependencies
 ============
 
-The application depende on [web2py](http://www.web2py.com) and [cold-start-recommender](https://github.com/elegans-io/cold-start-recommender)
+The application depends on [web2py](http://www.web2py.com) and [cold-start-recommender](https://github.com/elegans-io/cold-start-recommender)
 
 
 Installation
