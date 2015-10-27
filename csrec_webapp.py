@@ -216,6 +216,56 @@ class InfoItemHandler(tornado.web.RequestHandler):
         return self.write(json.dumps(actions_on_items))
 
 
+class SerializeHandler(tornado.web.RequestHandler):
+
+    def __init__(self, *args, **kwargs):
+        tornado.web.RequestHandler.__init__(self, *args, **kwargs)
+        self.engine = self.application.engine
+
+    """
+    curl -X GET 'http://localhost:8000/csrec/serialize?filename=/tmp/dump.bin'
+    """
+    def get(self):
+        try:
+            filename = self.get_argument("filename", "dump.bin")
+        except:
+            raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
+
+        self.engine.db.serialize(filepath=filename)
+
+        try:
+            self.engine.db.serialize(filepath=filename)
+        except csrec_exc.SerializeException:
+            raise tornado.web.HTTPError(404, reason="serialization error")
+
+        return self.write(json.dumps({}))
+
+
+class RestoreHandler(tornado.web.RequestHandler):
+
+    def __init__(self, *args, **kwargs):
+        tornado.web.RequestHandler.__init__(self, *args, **kwargs)
+        self.engine = self.application.engine
+
+    """
+    curl -X GET 'http://localhost:8000/csrec/restore?filename=/tmp/dump.bin'
+    """
+    def get(self):
+        try:
+            filename = self.get_argument("filename", "dump.bin")
+        except:
+            raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
+
+        self.engine.db.restore(filepath=filename)
+
+        try:
+            self.engine.db.restore(filepath=filename)
+        except csrec_exc.RestoreException:
+            raise tornado.web.HTTPError(404, reason="restore error")
+
+        return self.write(json.dumps({}))
+
+
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
@@ -227,6 +277,8 @@ class Application(tornado.web.Application):
             (r"/csrec/reconcile", ReconcileHandler),
             (r"/csrec/info/item", InfoItemHandler),
             (r"/csrec/info/user", InfoUserHandler),
+            (r"/csrec/serialize", SerializeHandler),
+            (r"/csrec/restore", RestoreHandler),
             ]
 
         settings = dict(
