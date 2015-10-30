@@ -12,7 +12,9 @@ import json
 from csrec import Recommender
 import csrec.exceptions as csrec_exc
 
+
 define("port", default=8888, help="run on the given port", type=int)
+
 
 class InsertItemHandler(tornado.web.RequestHandler):
 
@@ -23,7 +25,7 @@ class InsertItemHandler(tornado.web.RequestHandler):
     """
     Update (or insert) item. The unique_id must be given as param
     e.g.:
-    curl -X POST -H "Content-Type: application/json" -d '[{ "_id" : "123", "type": "lady", "category" : "romance"}, { "_id" : "Book1", "type": "male", "category" : "hardcore"}]' 'http://localhost:8000/csrec/insertitems?unique_id=_id'
+    curl -X POST -H "Content-Type: application/json" -d '[{ "_id" : "123", "type": "lady", "category" : "romance"}, { "_id" : "Book1", "type": "male", "category" : "hardcore"}]' 'http://localhost:8000/insertitems?unique_id=_id'
     """
     def post(self):
         try:
@@ -45,8 +47,8 @@ class ItemActionHandler(tornado.web.RequestHandler):
 
     """
     e.g.:
-    curl -X POST -H "Content-Type: application/json" -d '{ "item_info" : ["type", "category"]}' 'http://localhost:8000/csrec/itemaction?item=item1&user=User1&code=1&only_info=false'
-    curl -X POST -H "Content-Type: application/json" -d '{ "item_info" : ["type", "category"]}' 'http://localhost:8000/csrec/itemaction?item=item2&user=User1&code=2&only_info=false'
+    curl -X POST -H "Content-Type: application/json" -d '{ "item_info" : ["type", "category"]}' 'http://localhost:8000/itemaction?item=item1&user=User1&code=1&only_info=false'
+    curl -X POST -H "Content-Type: application/json" -d '{ "item_info" : ["type", "category"]}' 'http://localhost:8000/itemaction?item=item2&user=User1&code=2&only_info=false'
     """
     def post(self):
         only_info_p = self.get_argument("only_info", default='false')
@@ -85,7 +87,7 @@ class SocialActionHandler(tornado.web.RequestHandler):
 
     """
     e.g.:
-    curl -X POST  'http://localhost:8000/csrec/socialaction?user=User1&user_to=User2&code=4'
+    curl -X POST  'http://localhost:8000/socialaction?user=User1&user_to=User2&code=4'
     """
     def post(self):
         try:
@@ -108,7 +110,7 @@ class ItemHandler(tornado.web.RequestHandler):
         self.engine = self.application.engine
 
     """
-    curl -X GET  'http://localhost:8000/csrec/item?item=Book1'
+    curl -X GET  'http://localhost:8000/item?item=Book1'
     """
     def get(self):
         try:
@@ -127,7 +129,7 @@ class RecommendHandler(tornado.web.RequestHandler):
         self.engine = self.application.engine
 
     """
-    curl -X GET  'http://localhost:8000/csrec/recommend?user=User1&limit=10&fast=false'
+    curl -X GET  'http://localhost:8000/recommend?user=User1&limit=10&fast=false'
     """
     def get(self):
         try:
@@ -154,7 +156,7 @@ class ReconcileHandler(tornado.web.RequestHandler):
         self.engine = self.application.engine
 
     """
-    curl -X POST 'http://localhost:8000/csrec/reconcile?user_old=User1&user_new=User2'
+    curl -X POST 'http://localhost:8000/reconcile?user_old=User1&user_new=User2'
     """
     def post(self):
         try:
@@ -180,7 +182,7 @@ class InfoUserHandler(tornado.web.RequestHandler):
         self.engine = self.application.engine
 
     """
-    curl -X GET 'http://localhost:8000/csrec/info/user?user=User1'
+    curl -X GET 'http://localhost:8000/info/user?user=User1'
     """
     def get(self):
         try:
@@ -204,7 +206,7 @@ class InfoItemHandler(tornado.web.RequestHandler):
         self.engine = self.application.engine
 
     """
-    curl -X GET 'http://localhost:8000/csrec/info/user?user=User1'
+    curl -X GET 'http://localhost:8000/info/user?user=User1'
     """
     def get(self):
         try:
@@ -223,7 +225,7 @@ class SerializeHandler(tornado.web.RequestHandler):
         self.engine = self.application.engine
 
     """
-    curl -X GET 'http://localhost:8000/csrec/serialize?filename=/tmp/dump.bin'
+    curl -X GET 'http://localhost:8000/serialize?filename=/tmp/dump.bin'
     """
     def get(self):
         try:
@@ -248,7 +250,7 @@ class RestoreHandler(tornado.web.RequestHandler):
         self.engine = self.application.engine
 
     """
-    curl -X GET 'http://localhost:8000/csrec/restore?filename=/tmp/dump.bin'
+    curl -X GET 'http://localhost:8000/restore?filename=/tmp/dump.bin'
     """
     def get(self):
         try:
@@ -269,16 +271,16 @@ class RestoreHandler(tornado.web.RequestHandler):
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
-            (r"/csrec/insertitems", InsertItemHandler),
-            (r"/csrec/itemaction", ItemActionHandler),
-            (r"/csrec/socialaction", SocialActionHandler),
-            (r"/csrec/item", ItemHandler),
-            (r"/csrec/recommend", RecommendHandler),
-            (r"/csrec/reconcile", ReconcileHandler),
-            (r"/csrec/info/item", InfoItemHandler),
-            (r"/csrec/info/user", InfoUserHandler),
-            (r"/csrec/serialize", SerializeHandler),
-            (r"/csrec/restore", RestoreHandler),
+            (r"/insertitems", InsertItemHandler),
+            (r"/itemaction", ItemActionHandler),
+            (r"/socialaction", SocialActionHandler),
+            (r"/item", ItemHandler),
+            (r"/recommend", RecommendHandler),
+            (r"/reconcile", ReconcileHandler),
+            (r"/info/item", InfoItemHandler),
+            (r"/info/user", InfoUserHandler),
+            (r"/serialize", SerializeHandler),
+            (r"/restore", RestoreHandler),
             ]
 
         settings = dict(
