@@ -29,7 +29,7 @@ setup(
 	url='https://github.com/elegans-io/csrec-webapp',
 
     # Dependent packages (distributions)
-    install_requires=["cold-start-recommender>=0.4.0",
+    install_requires=["cold-start-recommender>=4.1.0",
                       "tornado>=4.2.1",
                       "locustio>=0.7.3"]
 )
