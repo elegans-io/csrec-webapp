@@ -24,7 +24,7 @@ setup(
     # Include additional files into the package
     include_package_data=False,
 
-    scripts=['csrec_webapp.py'],
+    scripts=['bin/csrec_webapp.py'],
 
 	url='https://github.com/elegans-io/csrec-webapp',
 
