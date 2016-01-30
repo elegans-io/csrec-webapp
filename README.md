@@ -6,7 +6,8 @@ This is a basic [tornado](http://www.tornadoweb.org/) application which provide 
 
 # Dependencies
 
-The application depends on [tornado](http://www.tornadoweb.org/) and [cold-start-recommender](https://github.com/elegans-io/cold-start-recommender version >= 0.5.0)
+* [tornado](http://www.tornadoweb.org/)
+* [cold-start-recommender](https://github.com/elegans-io/cold-start-recommender version >= 0.4.0)
 
 # Installation
 
