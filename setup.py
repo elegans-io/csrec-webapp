@@ -1,43 +1,16 @@
-from pkg_resources import parse_version
 from setuptools import setup, find_packages
 from codecs import open  # To use a consistent encoding
 from os import path
-import json
-
+import csrec_webapp
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the relevant file
-try:
-    import pypandoc
-    long_description = pypandoc.convert('README.md', 'rst')
-except(IOError, ImportError) as e:
-    print "ERROR:", e
-    long_description = open('DESCRIPTION.rst').read()
+long_description = open('README.txt').read()
 
 
 def setup_package():
 
-    build_requires = []
-    try:
-        import csrec
-        assert parse_version(csrec.__version__) >= parse_version('4.0.0')
-    except (ImportError, AssertionError):
-        build_requires.append('cold-start-recommender>=4')
-
-    try:
-        import tornado
-        assert parse_version(tornado.version) >= parse_version('4.2.1')
-    except (ImportError, AssertionError):
-        build_requires.append('tornado>=4.2.1')
-
-    try:
-        import locust
-        assert parse_version(locust.version) >= parse_version('0.7.3')
-    except (ImportError, AssertionError):
-        build_requires.append('locustio>=0.7.3')
-
-    with open('csrec_webapp/pkg_info.json') as fp:
-        _info = json.load(fp)
+    build_requires = ['cold-start-recommender>=0.4.0', 'tornado>=4.2.1', 'locustio>=0.7.3']
 
     metadata = dict(
         name='cold-start-recommender-webapp',
@@ -45,7 +18,7 @@ def setup_package():
         # Versions should comply with PEP440.  For a discussion on single-sourcing
         # the version across setup.py and the project code, see
         # https://packaging.python.org/en/latest/single_source_version.html
-        version=_info['version'],
+        version=csrec_webapp.__version__,
         description="Webapp for the cold start recommender",
         long_description=long_description,
 
@@ -53,11 +26,11 @@ def setup_package():
         url='https://github.com/elegans-io/csrec-webapp',
 
         # Author details
-        author=_info['author'],
-        author_email=_info['email'],
+        author='elegans.io Ltd',
+        author_email='info@elegans.io',
 
         # Choose your license
-        license=_info['license'],
+        license='GPL v2',
 
         # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
         classifiers=[
@@ -72,7 +45,7 @@ def setup_package():
             'Topic :: Scientific/Engineering :: Artificial Intelligence',
 
             # Pick your license as you wish (should match "license" above)
-            'License :: GNU General Public License v2 (GPLv2)',
+            'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
 
             # Specify the Python versions you support here. In particular, ensure
             # that you indicate whether you support Python 2, Python 3 or both.
@@ -106,8 +79,7 @@ def setup_package():
         # installed, specify them here.  If using Python 2.6 or less, then these
         # have to be included in MANIFEST.in as well.
         package_data={
-            'sample': ['package_data.dat'],
-            'csrec_webapp': ['*.cl', '*.py', '*.json']
+            'csrec_webapp': ['*.cl', '*.py']
         },
 
         include_package_data=True,
