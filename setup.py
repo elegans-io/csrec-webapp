@@ -5,15 +5,15 @@ import csrec_webapp
 here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the relevant file
-long_description = open('README.txt').read()
+long_description = open('README.md').read()
 
 
 def setup_package():
 
-    build_requires = ['cold-start-recommender>=0.4.0', 'tornado>=4.2.1', 'locustio>=0.7.3']
+    build_requires = ['csrec>=0.4.1', 'tornado>=4.5.2', 'locustio>=0.7.3']
 
     metadata = dict(
-        name='cold-start-recommender-webapp',
+        name='csrec-webapp',
 
         # Versions should comply with PEP440.  For a discussion on single-sourcing
         # the version across setup.py and the project code, see
@@ -57,7 +57,8 @@ def setup_package():
 
         # You can just specify the packages manually here if your project is
         # simple. Or you can use find_packages().
-        packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
+        #packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
+        packages=["csrec_webapp"],
 
         # List run-time dependencies here.  These will be installed by pip when your
         # project is installed. For an analysis of "install_requires" vs pip's
@@ -83,8 +84,6 @@ def setup_package():
         },
 
         include_package_data=True,
-
-#        data_files=[('config', ['config/csrec.config'])],
 
         scripts=['bin/csrec_webapp.py'],
 
