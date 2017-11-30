@@ -13,6 +13,18 @@ This is a basic [tornado](http://www.tornadoweb.org/) application which provide 
 
 pip install csrec-webapp
 
+or from the source folder (same folder of the setup.py file):
+
+```bash
+pip install .
+```
+
+To Uninstall the package:
+
+```bash
+pip uninstall csrec-webapp
+```
+
 # Running the application
 
 csrec_webapp.py --port=8888
