@@ -36,7 +36,7 @@ class InsertItemHandler(tornado.web.RequestHandler):
         item_id = self.get_argument("unique_id", default='_id')
         for i in items:
             self.engine.db.insert_item(item_id=i[item_id], attributes=i)
-        return self.write(json.dumps({}))
+        return self.write({})
 
 
 class ItemActionHandler(tornado.web.RequestHandler):
@@ -65,7 +65,7 @@ class ItemActionHandler(tornado.web.RequestHandler):
             raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
 
         try:
-            item_meaningful_info = json.loads(self.request.body.decode('utf-8'))
+            item_meaningful_info = json.loads(self.request.body.decode('utf-8'))["item_info"]
         except ValueError:
             item_meaningful_info = {}
 
@@ -76,7 +76,19 @@ class ItemActionHandler(tornado.web.RequestHandler):
             item_meaningful_info=item_meaningful_info,
             only_info=only_info
         )
-        return self.write(json.dumps({}))
+        return self.write({})
+
+    def delete(self):
+        try:
+            user_id = self.get_argument("user_id")
+            item_id = self.get_argument("item_id")
+        except:
+            raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
+
+        self.engine.db.remove_item_action(
+            user_id=user_id,
+            item_id=item_id)
+        return self.write({})
 
 
 class SocialActionHandler(tornado.web.RequestHandler):
@@ -101,7 +113,8 @@ class SocialActionHandler(tornado.web.RequestHandler):
             user_id=user_id,
             user_id_to=user_id_to,
             code=code)
-        return self.write(json.dumps({}))
+        return self.write({})
+
 
 class ItemHandler(tornado.web.RequestHandler):
 
@@ -120,6 +133,15 @@ class ItemHandler(tornado.web.RequestHandler):
 
         item_record = self.engine.db.get_items(item_id=item_id)
         return self.write(json.dumps(item_record))
+
+    def delete(self):
+        try:
+            item_id = self.get_argument("item")
+        except:
+            raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
+
+        self.engine.db.remove_item(item_id=item_id)
+        return self.write({})
 
 
 class RecommendHandler(tornado.web.RequestHandler):
@@ -145,8 +167,8 @@ class RecommendHandler(tornado.web.RequestHandler):
 
         limit = int(self.get_argument("limit", default=10))
 
-        recomms = self.engine.get_recommendations(user, max_recs=limit, fast=fast)
-        return self.write(json.dumps(recomms))
+        recomms = {"items": self.engine.get_recommendations(user, max_recs=limit, fast=fast)}
+        return self.write(recomms)
 
 
 class ReconcileHandler(tornado.web.RequestHandler):
@@ -172,7 +194,7 @@ class ReconcileHandler(tornado.web.RequestHandler):
             )
         except csrec_exc.MergeEntitiesException as e:
             raise tornado.web.HTTPError(404, reason="unable to reconcile users: " + e)
-        return self.write(json.dumps({}))
+        return self.write({})
 
 
 class InfoUserHandler(tornado.web.RequestHandler):
@@ -196,7 +218,7 @@ class InfoUserHandler(tornado.web.RequestHandler):
             actions = {'social': social_actions, 'item': item_actions}
         else:
             actions = {}
-        return self.write(json.dumps(actions))
+        return self.write(actions)
 
 
 class InfoItemHandler(tornado.web.RequestHandler):
@@ -215,7 +237,7 @@ class InfoItemHandler(tornado.web.RequestHandler):
             raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
 
         actions_on_items = self.engine.db.get_item_ratings(item_id=item_id)
-        return self.write(json.dumps(actions_on_items))
+        return self.write(actions_on_items)
 
 
 class SerializeHandler(tornado.web.RequestHandler):
@@ -240,7 +262,7 @@ class SerializeHandler(tornado.web.RequestHandler):
         except csrec_exc.SerializeException:
             raise tornado.web.HTTPError(404, reason="serialization error")
 
-        return self.write(json.dumps({}))
+        return self.write({})
 
 
 class RestoreHandler(tornado.web.RequestHandler):
@@ -265,7 +287,7 @@ class RestoreHandler(tornado.web.RequestHandler):
         except csrec_exc.RestoreException:
             raise tornado.web.HTTPError(404, reason="restore error")
 
-        return self.write(json.dumps({}))
+        return self.write({})
 
 
 class Application(tornado.web.Application):

@@ -99,6 +99,41 @@ Content: {}
 curl -X POST -H "Content-Type: application/json"  -d '[{ "_id" : "item1", "type": "lady", "category" : "high_heels"}, { "_id" : "item2", "type": "male", "category" : "mocassino"}, { "_id" : "item3", "type": "unisex", "category" : "mocassino"}, { "_id" : "item4", "type": "male", "category" : "mocassino"}]' 'http://elegans.it:8000/insertitems?unique_id=_id'
 ```
 
+### delete item
+
+delete an item
+
+#### methods
+
+DELETE
+
+#### URL params
+
+##### Required
+
+* item: item id of the item to delete
+
+
+
+#### Success Response
+
+Code: 200
+
+Content: {}
+
+#### Error Response
+
+Code: 404
+
+Content: {}
+
+#### Sample Call
+
+```bash
+curl -X DELETE -H "Content-Type: application/json"  'http://localhost:8000/item?item=1'
+```
+
+
 ### Post user action on an item
 
 #### methods
@@ -137,6 +172,41 @@ Content: {}
 
 ```bash
 curl -X POST  -H "Content-Type: application/json" -d '{ "item_info" : ["type", "category"]}' 'http://elegans.it:8000/itemaction?item=item1&user=User1&code=1&only_info=false'
+```
+
+### Delete a user action on an item
+
+#### methods
+
+DELETE
+
+#### URL Params
+
+##### Required
+
+* item_id: the item id (program, series etc)
+* user_id: the user id
+
+#### Description
+
+Delete a user action given a user_id and an item_id
+
+#### Success Response
+
+Code: 200
+
+Content: {}
+
+#### Error Response
+
+Code: 404
+
+Content: {}
+
+#### Sample Call
+
+```bash
+curl -X DELETE -H "Content-Type: application/json"  'http://localhost:8000/itemaction?item_id=1&user_id=1'
 ```
 
 ### Post a social action (users to users)
