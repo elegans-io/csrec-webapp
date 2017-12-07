@@ -271,7 +271,7 @@ Provide a list of recommended item_ids.
 
 Code: 200
 
-Content: a list of items e.g.: ```["item4", "item1", "item3", "item2", "User2"]```
+Content: a list of items e.g.: ```{"items": ["item4", "item1", "item3", "item2", "User2"]}```
 
 #### Error Response
 
@@ -317,7 +317,7 @@ Content: {}
 #### Sample Call
 
 ```bash
-curl -X POST 'http://elegans.it:8000/reconcile?user_old=User1&user_new=User2
+curl -X POST 'http://elegans.it:8000/reconcile?user_old=User1&user_new=User2'
 ```
 
 ### Get action of a user
