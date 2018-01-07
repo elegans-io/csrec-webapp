@@ -59,7 +59,7 @@ class ItemActionHandler(tornado.web.RequestHandler):
 
         try:
             user_id = self.get_argument("user")
-            item_id = self.get_argument("user")
+            item_id = self.get_argument("item")
             code = float(self.get_argument("code"))
         except:
             raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
