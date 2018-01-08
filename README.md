@@ -287,6 +287,41 @@ Content: {}
 curl -X GET 'http://localhost:8888/recommend?user=User1&limit=10'
 ```
 
+
+### Remove the actions for a user
+
+#### methods
+
+DELETE
+
+#### Description
+
+Remove the actions of a user from the data structures
+
+#### URL Params
+
+##### Required
+
+* user_id: user id
+
+#### Success Response
+
+Code: 200
+
+Content: {}
+
+#### Error Response
+
+Code: 404
+
+Content: {}
+
+#### Sample Call
+
+```bash
+curl -X GET 'http://localhost:8000/user?user_id=User1'
+```
+
 ### Reconcile session_id with user ID
 
 #### methods
