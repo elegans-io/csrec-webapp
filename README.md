@@ -296,7 +296,7 @@ DELETE
 
 #### Description
 
-Remove the actions of a user from the data structures
+Remove all the actions of a user from the data structures
 
 #### URL Params
 
@@ -319,7 +319,7 @@ Content: {}
 #### Sample Call
 
 ```bash
-curl -X GET 'http://localhost:8000/user?user_id=User1'
+curl -X DELETE 'http://localhost:8000/user?user_id=User1'
 ```
 
 ### Reconcile session_id with user ID
