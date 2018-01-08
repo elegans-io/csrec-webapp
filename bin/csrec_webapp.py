@@ -221,6 +221,25 @@ class InfoUserHandler(tornado.web.RequestHandler):
         return self.write(actions)
 
 
+class UserHandler(tornado.web.RequestHandler):
+
+    def __init__(self, *args, **kwargs):
+        tornado.web.RequestHandler.__init__(self, *args, **kwargs)
+        self.engine = self.application.engine
+
+    """
+    curl -X GET 'http://localhost:8000/user?user_id=User1'
+    """
+    def delete(self):
+        try:
+            user_id = self.get_argument("user_id")
+        except:
+            raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
+
+        self.engine.db.remove_user(user_id=user_id)
+        return self.write({})
+
+
 class InfoItemHandler(tornado.web.RequestHandler):
 
     def __init__(self, *args, **kwargs):
@@ -293,6 +312,7 @@ class RestoreHandler(tornado.web.RequestHandler):
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
+            (r"/user", UserHandler),
             (r"/insertitems", InsertItemHandler),
             (r"/itemaction", ItemActionHandler),
             (r"/socialaction", SocialActionHandler),
