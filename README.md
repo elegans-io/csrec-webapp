@@ -11,7 +11,9 @@ This is a basic [tornado](http://www.tornadoweb.org/) application which provide 
 
 # Installation
 
+```bash
 pip install cold-start-recommender-webapp
+```
 
 or from the source folder (same folder of the setup.py file):
 
@@ -22,7 +24,7 @@ pip install .
 To Uninstall the package:
 
 ```bash
-pip uninstall csrec-webapp
+pip uninstall cold-start-recommender-webapp
 ```
 
 # Running the application
