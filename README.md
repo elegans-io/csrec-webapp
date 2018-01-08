@@ -11,7 +11,7 @@ This is a basic [tornado](http://www.tornadoweb.org/) application which provide 
 
 # Installation
 
-pip install csrec-webapp
+pip install cold-start-recommender-webapp
 
 or from the source folder (same folder of the setup.py file):
 
@@ -96,7 +96,7 @@ Content: {}
 #### Sample Call
 
 ```bash
-curl -X POST -H "Content-Type: application/json"  -d '[{ "_id" : "item1", "type": "lady", "category" : "high_heels"}, { "_id" : "item2", "type": "male", "category" : "mocassino"}, { "_id" : "item3", "type": "unisex", "category" : "mocassino"}, { "_id" : "item4", "type": "male", "category" : "mocassino"}]' 'http://elegans.it:8000/insertitems?unique_id=_id'
+curl -X POST -H "Content-Type: application/json"  -d '[{ "_id" : "item1", "type": "lady", "category" : "high_heels"}, { "_id" : "item2", "type": "male", "category" : "mocassino"}, { "_id" : "item3", "type": "unisex", "category" : "mocassino"}, { "_id" : "item4", "type": "male", "category" : "mocassino"}]' 'http://localhost:8888/insertitems?unique_id=_id'
 ```
 
 ### delete item
@@ -130,7 +130,7 @@ Content: {}
 #### Sample Call
 
 ```bash
-curl -X DELETE -H "Content-Type: application/json"  'http://localhost:8000/item?item=1'
+curl -X DELETE -H "Content-Type: application/json"  'http://localhost:8888/item?item=1'
 ```
 
 
@@ -171,7 +171,7 @@ Content: {}
 #### Sample Call
 
 ```bash
-curl -X POST  -H "Content-Type: application/json" -d '{ "item_info" : ["type", "category"]}' 'http://elegans.it:8000/itemaction?item=item1&user=User1&code=1&only_info=false'
+curl -X POST  -H "Content-Type: application/json" -d '{ "item_info" : ["type", "category"]}' 'http://localhost:8888/itemaction?item=item1&user=User1&code=1&only_info=false'
 ```
 
 ### Delete a user action on an item
@@ -206,7 +206,7 @@ Content: {}
 #### Sample Call
 
 ```bash
-curl -X DELETE -H "Content-Type: application/json"  'http://localhost:8000/itemaction?item_id=1&user_id=1'
+curl -X DELETE -H "Content-Type: application/json"  'http://localhost:8888/itemaction?item_id=1&user_id=1'
 ```
 
 ### Post a social action (users to users)
@@ -242,7 +242,7 @@ Content: {}
 #### Sample Call
 
 ```bash
-curl -X POST 'http://elegans.it:8000/socialaction?user=User1&user_to=User2&code=3'
+curl -X POST 'http://elegans.it:8888/socialaction?user=User1&user_to=User2&code=3'
 ```
 
 ### Get recommended items for a user
@@ -282,7 +282,7 @@ Content: {}
 #### Sample Call
 
 ```bash
-curl -X GET 'http://elegans.it:8000/recommend?user=User1&limit=10'
+curl -X GET 'http://localhost:8888/recommend?user=User1&limit=10'
 ```
 
 ### Reconcile session_id with user ID
@@ -317,7 +317,7 @@ Content: {}
 #### Sample Call
 
 ```bash
-curl -X POST 'http://elegans.it:8000/reconcile?user_old=User1&user_new=User2'
+curl -X POST 'http://localhost:8888/reconcile?user_old=User1&user_new=User2'
 ```
 
 ### Get action of a user
@@ -356,7 +356,7 @@ Content: {}
 #### Sample Call
 
 ```bash
-curl -X GET 'http://elegans.it:8000/info/user?user=User1'
+curl -X GET 'http://localhost:8888/info/user?user=User1'
 ```
 
 ### Get interactions on an item
@@ -390,7 +390,7 @@ Content: {}
 #### Sample Call
 
 ```bash
-curl -X GET 'http://localhost:8000/info/item?item=item1'
+curl -X GET 'http://localhost:8888/info/item?item=item1'
 ```
 
 ### Serialize the data on files
@@ -424,7 +424,7 @@ Content: {}
 #### Sample Call
 
 ```bash
-curl -X GET 'http://localhost:8000/serialize?filename=/tmp/dump.bin'
+curl -X GET 'http://localhost:8888/serialize?filename=/tmp/dump.bin'
 ```
 
 ### Restore data from file
@@ -458,5 +458,5 @@ Content: {}
 #### Sample Call
 
 ```bash
-curl -X GET 'http://localhost:8000/restore?filename=/tmp/dump.bin'
+curl -X GET 'http://localhost:8888/restore?filename=/tmp/dump.bin'
 ```
