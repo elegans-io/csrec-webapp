@@ -11,7 +11,9 @@ import json
 
 from csrec import Recommender
 import csrec.exceptions as csrec_exc
+from tornado import gen, locks
 
+lock = locks.Lock()
 
 define("port", default=8888, help="run on the given port", type=int)
 
@@ -27,16 +29,17 @@ class InsertItemHandler(tornado.web.RequestHandler):
     e.g.:
     curl -X POST -H "Content-Type: application/json" -d '[{ "_id" : "123", "type": "lady", "category" : "romance"}, { "_id" : "Book1", "type": "male", "category" : "hardcore"}]' 'http://localhost:8000/insertitems?unique_id=_id'
     """
-    def post(self):
-        try:
-            items = json.loads(self.request.body.decode('utf-8'))
-        except ValueError:
-            raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
+    async def post(self):
+        async with lock:
+            try:
+                items = json.loads(self.request.body.decode('utf-8'))
+            except ValueError:
+                raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
 
-        item_id = self.get_argument("unique_id", default='_id')
-        for i in items:
-            self.engine.db.insert_item(item_id=i[item_id], attributes=i)
-        return self.write({})
+            item_id = self.get_argument("unique_id", default='_id')
+            for i in items:
+                self.engine.db.insert_item(item_id=i[item_id], attributes=i)
+            return self.write({})
 
 
 class ItemActionHandler(tornado.web.RequestHandler):
@@ -50,45 +53,47 @@ class ItemActionHandler(tornado.web.RequestHandler):
     curl -X POST -H "Content-Type: application/json" -d '{ "item_info" : ["type", "category"]}' 'http://localhost:8000/itemaction?item=item1&user=User1&code=1&only_info=false'
     curl -X POST -H "Content-Type: application/json" -d '{ "item_info" : ["type", "category"]}' 'http://localhost:8000/itemaction?item=item2&user=User1&code=2&only_info=false'
     """
-    def post(self):
-        only_info_p = self.get_argument("only_info", default='false')
-        if only_info_p == 'true':
-            only_info = True
-        else:
-            only_info = False
+    async def post(self):
+        async with lock:
+            only_info_p = self.get_argument("only_info", default='false')
+            if only_info_p == 'true':
+                only_info = True
+            else:
+                only_info = False
 
-        try:
-            user_id = self.get_argument("user")
-            item_id = self.get_argument("item")
-            code = float(self.get_argument("code"))
-        except:
-            raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
+            try:
+                user_id = self.get_argument("user")
+                item_id = self.get_argument("item")
+                code = float(self.get_argument("code"))
+            except:
+                raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
 
-        try:
-            item_meaningful_info = json.loads(self.request.body.decode('utf-8'))["item_info"]
-        except ValueError:
-            item_meaningful_info = {}
+            try:
+                item_meaningful_info = json.loads(self.request.body.decode('utf-8'))["item_info"]
+            except ValueError:
+                item_meaningful_info = {}
 
-        self.engine.db.insert_item_action(
-            user_id=user_id,
-            item_id=item_id,
-            code=code,
-            item_meaningful_info=item_meaningful_info,
-            only_info=only_info
-        )
-        return self.write({})
+            self.engine.db.insert_item_action(
+                user_id=user_id,
+                item_id=item_id,
+                code=code,
+                item_meaningful_info=item_meaningful_info,
+                only_info=only_info
+            )
+            return self.write({})
 
-    def delete(self):
-        try:
-            user_id = self.get_argument("user_id")
-            item_id = self.get_argument("item_id")
-        except:
-            raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
+    async def delete(self):
+        async with lock:
+            try:
+                user_id = self.get_argument("user_id")
+                item_id = self.get_argument("item_id")
+            except:
+                raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
 
-        self.engine.db.remove_item_action(
-            user_id=user_id,
-            item_id=item_id)
-        return self.write({})
+            self.engine.db.remove_item_action(
+                user_id=user_id,
+                item_id=item_id)
+            return self.write({})
 
 
 class SocialActionHandler(tornado.web.RequestHandler):
@@ -101,19 +106,20 @@ class SocialActionHandler(tornado.web.RequestHandler):
     e.g.:
     curl -X POST  'http://localhost:8000/socialaction?user=User1&user_to=User2&code=4'
     """
-    def post(self):
-        try:
-            user_id = self.get_argument("user")
-            user_id_to = self.get_argument("user_to")
-            code = float(self.get_argument("code"))
-        except:
-            raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
+    async def post(self):
+        async with lock:
+            try:
+                user_id = self.get_argument("user")
+                user_id_to = self.get_argument("user_to")
+                code = float(self.get_argument("code"))
+            except:
+                raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
 
-        self.engine.db.insert_social_action(
-            user_id=user_id,
-            user_id_to=user_id_to,
-            code=code)
-        return self.write({})
+            self.engine.db.insert_social_action(
+                user_id=user_id,
+                user_id_to=user_id_to,
+                code=code)
+            return self.write({})
 
 
 class ItemHandler(tornado.web.RequestHandler):
@@ -134,14 +140,15 @@ class ItemHandler(tornado.web.RequestHandler):
         item_record = self.engine.db.get_items(item_id=item_id)
         return self.write(json.dumps(item_record))
 
-    def delete(self):
-        try:
-            item_id = self.get_argument("item")
-        except:
-            raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
+    async def delete(self):
+        async with lock:
+            try:
+                item_id = self.get_argument("item")
+            except:
+                raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
 
-        self.engine.db.remove_item(item_id=item_id)
-        return self.write({})
+            self.engine.db.remove_item(item_id=item_id)
+            return self.write({})
 
 
 class RecommendHandler(tornado.web.RequestHandler):
@@ -180,21 +187,22 @@ class ReconcileHandler(tornado.web.RequestHandler):
     """
     curl -X POST 'http://localhost:8000/reconcile?user_old=User1&user_new=User2'
     """
-    def post(self):
-        try:
-            old_user_id = self.get_argument("user_old")
-            new_user_id = self.get_argument("user_new")
-        except:
-            raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
+    async def post(self):
+        async with lock:
+            try:
+                old_user_id = self.get_argument("user_old")
+                new_user_id = self.get_argument("user_new")
+            except:
+                raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
 
-        try:
-            self.engine.db.reconcile_user(
-                old_user_id=old_user_id,
-                new_user_id=new_user_id
-            )
-        except csrec_exc.MergeEntitiesException as e:
-            raise tornado.web.HTTPError(404, reason="unable to reconcile users: " + e)
-        return self.write({})
+            try:
+                self.engine.db.reconcile_user(
+                    old_user_id=old_user_id,
+                    new_user_id=new_user_id
+                )
+            except csrec_exc.MergeEntitiesException as e:
+                raise tornado.web.HTTPError(404, reason="unable to reconcile users: " + e)
+            return self.write({})
 
 
 class InfoUserHandler(tornado.web.RequestHandler):
@@ -230,14 +238,15 @@ class UserHandler(tornado.web.RequestHandler):
     """
     curl -X GET 'http://localhost:8000/user?user_id=User1'
     """
-    def delete(self):
-        try:
-            user_id = self.get_argument("user_id")
-        except:
-            raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
+    async def delete(self):
+        async with lock:
+            try:
+                user_id = self.get_argument("user_id")
+            except:
+                raise tornado.web.HTTPError(404, reason="invalid function call, check parameters")
 
-        self.engine.db.remove_user(user_id=user_id)
-        return self.write({})
+            self.engine.db.remove_user(user_id=user_id)
+            return self.write({})
 
 
 class InfoItemHandler(tornado.web.RequestHandler):
@@ -338,6 +347,7 @@ def main():
     http_server = tornado.httpserver.HTTPServer(application)
     http_server.listen(options.port)
     tornado.ioloop.IOLoop.current().start()
+
 
 if __name__ == "__main__":
     main()
